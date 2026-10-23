@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: shortlinks
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/shortlinks?connectTimeout=3&socketTimeout=5}
+    username: ${POSTGRES_USER:shortlinks}
+    password: ${POSTGRES_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 3000
+  jdbc:
+    template:
+      query-timeout: 5s
+  flyway:
+    enabled: true
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+  forward-headers-strategy: none
+  error:
+    include-message: never
+    include-stacktrace: never
+app:
+  public-base-url: ${PUBLIC_BASE_URL}
+cache:
+  enabled: ${CACHE_ENABLED:false}
+  host: ${REDIS_HOST:localhost}
+  port: ${REDIS_PORT:6379}
+  password: ${REDIS_PASSWORD:}
+  positive-ttl: ${CACHE_POSITIVE_TTL:60s}
+  negative-ttl: ${CACHE_NEGATIVE_TTL:5s}
+  connect-timeout: ${REDIS_CONNECT_TIMEOUT:200ms}
+  command-timeout: ${REDIS_COMMAND_TIMEOUT:200ms}
+  failure-window: ${CACHE_FAILURE_WINDOW:10}
+  open-duration: ${CACHE_OPEN_DURATION:5s}
+  failure-rate-threshold: ${CACHE_FAILURE_RATE_THRESHOLD:50}
+  half-open-calls: ${CACHE_HALF_OPEN_CALLS:2}
+management:
+  server:
+    port: ${MANAGEMENT_PORT:9090}
+    address: ${MANAGEMENT_ADDRESS:127.0.0.1}
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState,db
+springdoc:
+  override-with-generic-response: false
+  api-docs:
+    enabled: ${API_DOCS_ENABLED:true}
+  swagger-ui:
+    enabled: ${API_DOCS_ENABLED:true}
+logging:
+  structured:
+    format:
+      console: ecs
